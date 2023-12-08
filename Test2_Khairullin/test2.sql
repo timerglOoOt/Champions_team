@@ -51,7 +51,16 @@ group by flight_no, scheduled_departure
 order by выручка desc;
 
 --7
-
+select flight_no,
+    sum(case when extract(month from scheduled_departure) = 8 then amount else 0 end) as august,
+    sum(case when extract(month from scheduled_departure) = 8 then amount else 0 end) as september
+from flights
+join ticket_flights on ticket_flights.flight_id = flights.flight_id
+where extract(year from scheduled_departure) = 2017
+and (extract(month from scheduled_departure) = 8
+or extract(month from scheduled_departure) = 9)
+group by flight_no
+order by september desc , august desc, flight_no;
 
 --8
 --Первая реализация
