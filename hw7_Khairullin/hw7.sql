@@ -47,7 +47,7 @@ join ticket_flights on tickets.ticket_no = ticket_flights.ticket_no
 join flights on ticket_flights.flight_id = flights.flight_id
 order by tickets.passenger_name desc, flights.departure_airport desc;
 
--- или вот так еще можно
+-- или вот так еще можно (это вроде то, что по условию нужно)
 
 select passenger_name
 from tickets
@@ -71,21 +71,30 @@ left join ticket_flights on flights.flight_id = ticket_flights.flight_id
 where ticket_flights.flight_id is null;
 
 --9
-select airport_name, count(ticket_flights)
-from airports_data
-join flights on airports_data.airport_code = flights.departure_airport
-join ticket_flights on flights.flight_id = ticket_flights.flight_id
-group by airport_name
-
-
-select avg (tt)
-FROM (SELECT fligh
+with seats_count as (
+    select aircrafts_data.aircraft_code, count(seats) as seats_count
+    from aircrafts_data
+    join seats on aircrafts_data.aircraft_code = seats.aircraft_code
+    group by aircrafts_data.aircraft_code
+),
+tickets_count as (
+    select flights.flight_id, count(ticket_flights) as tickets_count
     from flights
-          COUNT(seats) AS tt FROM seats )
--- from airports_data
-join flights on airports_data.airport_code = flights.departure_airport
-join aircrafts_data on flights.aircraft_code = aircrafts_data.aircraft_code
-join seats on aircrafts_data. aircraft_code = seats.aircraft_code
+    join ticket_flights on flights.flight_id = ticket_flights.flight_id
+    group by flights.flight_id
+)
+select departure_airport, avg(seats_count.seats_count) as средняя_вместимость, avg(tickets_count.tickets_count) as среднее_кол_во_билетов
+from flights
+join seats_count on flights.aircraft_code = seats_count.aircraft_code
+join tickets_count on flights.flight_id = tickets_count.flight_id
+where extract(month from scheduled_departure) = 8 and extract(year from scheduled_departure) = 2017
+group by departure_airport
+order by средняя_вместимость desc, среднее_кол_во_билетов desc;
+
+
+
+--10
+select flight_no, min(ticket_flights.amount) as минимальная_цена, max(ticket_flights.amount) as максимальная_цена
+from flights
 join ticket_flights on flights.flight_id = ticket_flights.flight_id
--- where (select extract (MONTH FROM scheduled_departure)) = 9
-group by airport_name ->> 'ru'
+group by flight_no;

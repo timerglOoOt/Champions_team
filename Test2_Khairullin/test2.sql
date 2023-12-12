@@ -51,6 +51,7 @@ group by flight_no, scheduled_departure
 order by выручка desc;
 
 --7
+<<<<<<< HEAD
 select flight_no,
     sum(case when extract(month from scheduled_departure) = 8 then amount else 0 end) as august,
     sum(case when extract(month from scheduled_departure) = 9 then amount else 0 end) as september
@@ -61,6 +62,9 @@ and (extract(month from scheduled_departure) = 8
 or extract(month from scheduled_departure) = 9)
 group by flight_no
 order by september desc , august desc, flight_no;
+=======
+
+>>>>>>> parent of 1901a07 (feat: add 7 task solution)
 
 --8
 --Первая реализация
