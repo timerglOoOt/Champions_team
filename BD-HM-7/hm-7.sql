@@ -87,9 +87,10 @@ select airport_name ->> 'ru' as airport_name,
     order by average_seats desc, average_tickets desc;
 
 -- J
-Select flight_id, min(amount) as min_price, max(amount) as max_price from ticket_flights
-group by flight_id
-order by flight_id;
+Select flight_no, min(amount) as min_price, max(amount) as max_price from ticket_flights
+join flights on ticket_flights.flight_id = flights.flight_id
+group by flight_no
+order by flight_no;
 
 --  some trying
 -- select avg(gg) from (
